@@ -1,0 +1,148 @@
+#!/bin/bash
+
+# ==================================================================== #
+#                            script: ece206                            #
+# ==================================================================== #
+#% SYNOPSIS
+#+    ece206 [COMMAND]
+#%
+#% DESCRIPTION
+#+    A helper script to assist in utlizing a docker environment
+#+    to write and test verilog projects.
+#%
+#% COMMANDS
+#+    init          Create cli and working directory for projects
+#+    start         Start docker container with ~/ece206 mounted
+#%
+#% OPTIONS
+#+    -h, --help                    Print help information
+#+    -v, --version                 Print version information
+#%
+#% EXAMPLES
+#+    ece206 start
+#%
+#=======================================================================
+#- IMPLEMENTATION
+#-    version         0.0.1
+#-    last updated    2021/10/21
+#-    author(s)       BENJAMIN HERBER,
+#-    repository      https://github.com/benherber/ece206-dockerenv
+#-
+#=======================================================================
+#  HISTORY
+#     2021/10/21 : Benjamin Herber : Created Script
+#=======================================================================
+
+# #################################################################### #
+#                              VARIABLES                               #
+# #################################################################### #
+
+WORKDIR=~/ece206 # Working directory for projects
+
+VERSION="0.0.1"          # Version number
+LAST_UPDATED="Oct. 2021" # Last update to script
+
+# #################################################################### #
+#                              FUNCTIONS                               #
+# #################################################################### #
+
+# Error out on usage issue
+# OUTPUTS:
+#   Write help message to stderr
+
+function usage() {
+    echo "Unrecognized command: try \`ece206 --help\` for more options" 1>&2
+    exit 1
+}
+
+# -------------------------------------------------------------------- #
+
+# Start the docker container with $WORKDIR volume mounted
+# GLOBALS:
+#   WORKDIR
+# OUTPUTS:
+#   Interactive shell session within container
+
+function start() {
+    docker run \
+        --rm \
+        -v "$WORKDIR":/workspace \
+        -e BROADWAY=5 \
+        -p 8085:8085 \
+        -it ece206 /bin/bash
+}
+
+# -------------------------------------------------------------------- #
+
+# Create working directory (~/ece206) and put script in bin directory
+# GLOBALS:
+#   WORKDIR
+# RETURN:
+#   0 if succeeded, non-zero on error.
+
+function init() {
+    [ ! -d "$WORKDIR" ] && mkdir "$WORKDIR"
+    touch /usr/local/bin/ece206
+    cat $(pwd)/ece206 >| /usr/local/bin/ece206
+    chmod +x /usr/local/bin/ece206
+    return 0
+}
+
+# -------------------------------------------------------------------- #
+
+# Print help information to stdout
+# GLOBALS:
+#   VERSION, LAST_UPDATED
+# OUTPUTS:
+#   Write help info to stdout
+# RETURN:
+#   0 if print succeeds, non-zero on error.
+
+function helpme() {
+    echo ""
+    echo "SYNOPSIS"
+    echo "  ece206 [COMMAND]"
+    echo ""
+    echo "DESCRIPTION"
+    echo "  A helper script to assist in utlizing a docker environment" \
+        "to write and test verilog projects."
+    echo ""
+    echo "COMMANDS"
+    echo "  init   Create cli and working directory for projects"
+    echo "  start  Start docker container with ~/ece206 mounted"
+    echo ""
+    echo "OPTIONS"
+    echo "  --help | -h  Show this screen"
+    echo ""
+    echo "version: $VERSION, last updated: $LAST_UPDATED"
+    echo ""
+    return 0
+}
+
+# #################################################################### #
+#                             MAIN PROGRAM                             #
+# #################################################################### #
+
+# Enforce number of args:
+[[ $# -ne 1 ]] && usage
+
+# Parse Args:
+case "$1" in
+"init")
+    init
+    ;;
+"wdir")
+    wdir
+    ;;
+"start")
+    start
+    ;;
+"-h" | "--help")
+    helpme
+    ;;
+*)
+    usage
+    ;;
+esac
+
+exit 0
