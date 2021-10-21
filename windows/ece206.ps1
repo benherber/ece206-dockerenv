@@ -78,11 +78,6 @@ function PrivateECE206Init {
         New-Item -ItemType Directory -Force -Path $WORKDIR
     }
     If (!(Test-Path $PROFILE)) {
-    #     $presentwdir = Get-Location | Foreach-Object { $_.Path }
-    #     $present = $presentwdir + "\ece206.ps1"
-    #     Copy-Item $present -Destination $PROFILE
-    # }
-    # else {
         Write-Error "ERROR: Please paste these functions into $PROFILE"
     }
     docker pull benherber/ece206:latest

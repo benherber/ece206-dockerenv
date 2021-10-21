@@ -16,7 +16,6 @@
 #%
 #% OPTIONS
 #+    -h, --help                    Print help information
-#+    -v, --version                 Print version information
 #%
 #% EXAMPLES
 #+    ece206 start
