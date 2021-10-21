@@ -47,7 +47,7 @@ $LAST_UPDATED = "Oct. 2021" # Last update to script
 # Error out on usage issue
 # OUTPUTS:
 #   Write help message to stderr
-function Usage {
+function PrivateECE206Usage {
     Write-Error "Unrecognized command: try ``ece206 --help`` for more options"
 }
 
@@ -59,7 +59,7 @@ function Usage {
 # OUTPUTS:
 #   Interactive shell session within container
 
-function StartContainer206 {
+function PrivateECE206StartContainer {
     docker run `
         --rm `
         -v "$WORKDIR":/workspace `
@@ -76,16 +76,16 @@ function StartContainer206 {
 # RETURN:
 #   0 if succeeded, non-zero on error.
 
-function Init206 {
+function PrivateECE206Init {
     If (!(Test-Path $WORKDIR)) {
         New-Item -ItemType Directory -Force -Path $WORKDIR
     }
     If (!(Test-Path $PROFILE)) {
-        $presentwdir = Get-Location | Foreach-Object { $_.Path }
-        $present = $presentwdir + "\ece206.ps1"
-        Copy-Item $present -Destination $PROFILE
-    }
-    else {
+    #     $presentwdir = Get-Location | Foreach-Object { $_.Path }
+    #     $present = $presentwdir + "\ece206.ps1"
+    #     Copy-Item $present -Destination $PROFILE
+    # }
+    # else {
         Write-Error "ERROR: Please paste these functions into $PROFILE"
     }
     docker pull benherber/ece206:latest
@@ -102,7 +102,7 @@ function Init206 {
 # RETURN:
 #   0 if print succeeds, non-zero on error.
 
-function Helpme() {
+function PrivateECE206HelpMe() {
     Write-Host ""
     Write-Host "SYNOPSIS"
     Write-Host "  ece206 [COMMAND]"
@@ -132,10 +132,10 @@ function ece206 {
 
     # Parse Args:
     switch ($arg0) {
-        "init" { Init206; Break }
-        "start" { StartContainer206; Break }
-        "-h" { Helpme; Break }
-        "--help" { Helpme; Break }
-        Default { Usage; Break }
+        "init" { PrivateECE206Init; Break }
+        "start" { PrivateECE206StartContainer; Break }
+        "-h" { PrivateECE206HelpMe; Break }
+        "--help" { PrivateECE206HelpMe; Break }
+        Default { PrivateECE206Usage; Break }
     }
 }
