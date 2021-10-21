@@ -1,5 +1,3 @@
-#!/bin/bash
-
 # ==================================================================== #
 #                            script: ece206                            #
 # ==================================================================== #
@@ -37,10 +35,10 @@
 #                              VARIABLES                               #
 # #################################################################### #
 
-WORKDIR=~/ece206 # Working directory for projects
+$WORKDIR = $HOME + "\ece206" # Working directory for projects
 
-VERSION="0.0.1"          # Version number
-LAST_UPDATED="Oct. 2021" # Last update to script
+$VERSION = "0.0.1"          # Version number
+$LAST_UPDATED = "Oct. 2021" # Last update to script
 
 # #################################################################### #
 #                              FUNCTIONS                               #
@@ -49,10 +47,8 @@ LAST_UPDATED="Oct. 2021" # Last update to script
 # Error out on usage issue
 # OUTPUTS:
 #   Write help message to stderr
-
-function usage() {
-    echo "Unrecognized command: try \`ece206 --help\` for more options" 1>&2
-    exit 1
+function Usage {
+    Write-Error "Unrecognized command: try ``ece206 --help`` for more options"
 }
 
 # -------------------------------------------------------------------- #
@@ -63,28 +59,36 @@ function usage() {
 # OUTPUTS:
 #   Interactive shell session within container
 
-function start() {
-    docker run \
-        --rm \
-        -v "$WORKDIR":/workspace \
-        -e BROADWAY=5 \
-        -p 8085:8085 \
-        -it ece206 /bin/bash
+function StartContainer206 {
+    docker run `
+        --rm `
+        -v "$WORKDIR":/workspace `
+        -e BROADWAY=5 `
+        -p 8085:8085 `
+        -it bherber/ece206:latest /bin/bash
 }
 
 # -------------------------------------------------------------------- #
 
-# Create working directory (~/ece206) and put script in bin directory
+# Create working directory (C:\%USERPROFILE%\ece206) and put script in bin directory
 # GLOBALS:
 #   WORKDIR
 # RETURN:
 #   0 if succeeded, non-zero on error.
 
-function init() {
-    [ ! -d "$WORKDIR" ] && mkdir "$WORKDIR"
-    touch /usr/local/bin/ece206
-    cat $(pwd)/ece206 >| /usr/local/bin/ece206
-    chmod +x /usr/local/bin/ece206
+function Init206 {
+    If (!(Test-Path $WORKDIR)) {
+        New-Item -ItemType Directory -Force -Path $WORKDIR
+    }
+    If (!(Test-Path $PROFILE)) {
+        $presentwdir = Get-Location | Foreach-Object { $_.Path }
+        $present = $presentwdir + "\ece206.ps1"
+        Copy-Item $present -Destination $PROFILE
+    }
+    else {
+        Write-Error "ERROR: Please paste these functions into $PROFILE"
+    }
+    docker pull benherber/ece206:latest
     return 0
 }
 
@@ -98,24 +102,23 @@ function init() {
 # RETURN:
 #   0 if print succeeds, non-zero on error.
 
-function helpme() {
-    echo ""
-    echo "SYNOPSIS"
-    echo "  ece206 [COMMAND]"
-    echo ""
-    echo "DESCRIPTION"
-    echo "  A helper script to assist in utlizing a docker environment" \
-        "to write and test verilog projects."
-    echo ""
-    echo "COMMANDS"
-    echo "  init   Create cli and working directory for projects"
-    echo "  start  Start docker container with ~/ece206 mounted"
-    echo ""
-    echo "OPTIONS"
-    echo "  --help | -h  Show this screen"
-    echo ""
-    echo "version: $VERSION, last updated: $LAST_UPDATED"
-    echo ""
+function Helpme() {
+    Write-Host ""
+    Write-Host "SYNOPSIS"
+    Write-Host "  ece206 [COMMAND]"
+    Write-Host ""
+    Write-Host "DESCRIPTION"
+    Write-Host "  A helper script to assist in utlizing a docker environment to write and test verilog projects."
+    Write-Host ""
+    Write-Host "COMMANDS"
+    Write-Host "  init   Create cli and working directory for projects"
+    Write-Host "  start  Start docker container with ~/ece206 mounted"
+    Write-Host ""
+    Write-Host "OPTIONS"
+    Write-Host "  --help | -h  Show this screen"
+    Write-Host ""
+    Write-Host "version: $VERSION, last updated: $LAST_UPDATED"
+    Write-Host ""
     return 0
 }
 
@@ -123,26 +126,16 @@ function helpme() {
 #                             MAIN PROGRAM                             #
 # #################################################################### #
 
-# Enforce number of args:
-[[ $# -ne 1 ]] && usage
+function ece206 {
+    [CmdletBinding()]
+    Param([parameter(Position = 0)]$arg0)
 
-# Parse Args:
-case "$1" in
-"init")
-    init
-    ;;
-"wdir")
-    wdir
-    ;;
-"start")
-    start
-    ;;
-"-h" | "--help")
-    helpme
-    ;;
-*)
-    usage
-    ;;
-esac
-
-exit 0
+    # Parse Args:
+    switch ($arg0) {
+        "init" { Init206; Break }
+        "start" { StartContainer206; Break }
+        "-h" { Helpme; Break }
+        "--help" { Helpme; Break }
+        Default { Usage; Break }
+    }
+}
