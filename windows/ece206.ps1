@@ -13,8 +13,7 @@
 #+    start         Start docker container with ~/ece206 mounted
 #%
 #% OPTIONS
-#+    -h, --help                    Print help information
-#+    -v, --version                 Print version information
+#+    --help                    Print help information
 #%
 #% EXAMPLES
 #+    ece206 start
@@ -62,10 +61,10 @@ function PrivateECE206Usage {
 function PrivateECE206StartContainer {
     docker run `
         --rm `
-        -v "$WORKDIR":/workspace `
+        -v ${WORKDIR}:/workspace `
         -e BROADWAY=5 `
         -p 8085:8085 `
-        -it bherber/ece206:latest /bin/bash
+        -it benherber/ece206:latest /bin/bash
 }
 
 # -------------------------------------------------------------------- #
@@ -73,8 +72,6 @@ function PrivateECE206StartContainer {
 # Create working directory (C:\%USERPROFILE%\ece206) and put script in bin directory
 # GLOBALS:
 #   WORKDIR
-# RETURN:
-#   0 if succeeded, non-zero on error.
 
 function PrivateECE206Init {
     If (!(Test-Path $WORKDIR)) {
@@ -89,7 +86,6 @@ function PrivateECE206Init {
         Write-Error "ERROR: Please paste these functions into $PROFILE"
     }
     docker pull benherber/ece206:latest
-    return 0
 }
 
 # -------------------------------------------------------------------- #
@@ -99,10 +95,8 @@ function PrivateECE206Init {
 #   VERSION, LAST_UPDATED
 # OUTPUTS:
 #   Write help info to stdout
-# RETURN:
-#   0 if print succeeds, non-zero on error.
 
-function PrivateECE206HelpMe() {
+function PrivateECE206HelpMe {
     Write-Host ""
     Write-Host "SYNOPSIS"
     Write-Host "  ece206 [COMMAND]"
@@ -115,11 +109,10 @@ function PrivateECE206HelpMe() {
     Write-Host "  start  Start docker container with ~/ece206 mounted"
     Write-Host ""
     Write-Host "OPTIONS"
-    Write-Host "  --help | -h  Show this screen"
+    Write-Host "  --help  Show this screen"
     Write-Host ""
     Write-Host "version: $VERSION, last updated: $LAST_UPDATED"
     Write-Host ""
-    return 0
 }
 
 # #################################################################### #
@@ -134,7 +127,6 @@ function ece206 {
     switch ($arg0) {
         "init" { PrivateECE206Init; Break }
         "start" { PrivateECE206StartContainer; Break }
-        "-h" { PrivateECE206HelpMe; Break }
         "--help" { PrivateECE206HelpMe; Break }
         Default { PrivateECE206Usage; Break }
     }
