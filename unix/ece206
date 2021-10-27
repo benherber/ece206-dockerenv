@@ -68,7 +68,7 @@ function start() {
         -v "$WORKDIR":/workspace \
         -e BROADWAY=5 \
         -p 8085:8085 \
-        -it bherber/ece206:latest /bin/bash
+        -it benherber/ece206:latest /bin/bash
 }
 
 # -------------------------------------------------------------------- #
