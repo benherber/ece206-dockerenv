@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2021) (preloaded format=pdflatex 2021.9.30)  22 OCT 2021 03:08
+This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2021) (preloaded format=pdflatex 2021.9.30)  27 OCT 2021 20:06
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -618,24 +618,24 @@ File: ./images/iverilog_confirmation.png Graphic file (type png)
 Package pdftex.def Info: ./images/iverilog_confirmation.png  used on input line 177.
 (pdftex.def)             Requested size: 295.20113pt x 191.72594pt.
 [5 <./images/container_started.png>]
-<./images/gtkwave_version_confirmation.png, id=81, 564.1075pt x 366.36874pt>
+<./images/gtkwave_version_confirmation.png, id=82, 564.1075pt x 366.36874pt>
 File: ./images/gtkwave_version_confirmation.png Graphic file (type png)
 <use ./images/gtkwave_version_confirmation.png>
 Package pdftex.def Info: ./images/gtkwave_version_confirmation.png  used on input line 188.
 (pdftex.def)             Requested size: 295.20113pt x 191.72594pt.
 [6 <./images/iverilog_confirmation.png> <./images/gtkwave_version_confirmation.png>]
-<./images/gtkwave_browser_confirmation.png, id=92, 1686.3pt x 1053.9375pt>
+<./images/gtkwave_browser_confirmation.png, id=93, 1686.3pt x 1053.9375pt>
 File: ./images/gtkwave_browser_confirmation.png Graphic file (type png)
 <use ./images/gtkwave_browser_confirmation.png>
 Package pdftex.def Info: ./images/gtkwave_browser_confirmation.png  used on input line 204.
 (pdftex.def)             Requested size: 332.09775pt x 207.55133pt.
-<./images/container_selection.png, id=93, 1020.81375pt x 762.85pt>
+<./images/container_selection.png, id=94, 1020.81375pt x 762.85pt>
 File: ./images/container_selection.png Graphic file (type png)
 <use ./images/container_selection.png>
 Package pdftex.def Info: ./images/container_selection.png  used on input line 210.
 (pdftex.def)             Requested size: 239.84775pt x 179.23485pt.
 [7 <./images/gtkwave_browser_confirmation.png>]
-<./images/install_container_ext.png, id=106, 1292.83pt x 808.01875pt>
+<./images/install_container_ext.png, id=107, 1292.83pt x 808.01875pt>
 File: ./images/install_container_ext.png Graphic file (type png)
 <use ./images/install_container_ext.png>
 Package pdftex.def Info: ./images/install_container_ext.png  used on input line 214.
@@ -645,18 +645,18 @@ Package rerunfilecheck Info: File `output.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
  ) 
 Here is how much of TeX's memory you used:
- 13409 strings out of 478542
- 193984 string characters out of 5850413
- 745064 words of memory out of 5000000
- 31145 multiletter control sequences out of 15000+600000
- 410264 words of font info for 50 fonts, out of 8000000 for 9000
+ 13411 strings out of 478542
+ 194010 string characters out of 5850413
+ 752101 words of memory out of 5000000
+ 31146 multiletter control sequences out of 15000+600000
+ 410645 words of font info for 51 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  60i,12n,66p,1143b,1416s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/local/texlive/2021/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc}</usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt9.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/cm-super/sfrm1095.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/cm-super/sftt0900.pfb>
-Output written on /compile/output.pdf (9 pages, 1306965 bytes).
+{/usr/local/texlive/2021/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc}</usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt9.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/cm-super/sfrm1095.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/cm-super/sfti1095.pfb></usr/local/texlive/2021/texmf-dist/fonts/type1/public/cm-super/sftt0900.pfb>
+Output written on /compile/output.pdf (9 pages, 1328010 bytes).
 PDF statistics:
- 179 PDF objects out of 1000 (max. 8388607)
- 132 compressed objects within 2 object streams
+ 184 PDF objects out of 1000 (max. 8388607)
+ 135 compressed objects within 2 object streams
  48 named destinations out of 1000 (max. 500000)
  31 words of extra memory for PDF output out of 10000 (max. 10000000)
 

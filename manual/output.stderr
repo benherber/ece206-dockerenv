@@ -1,6 +1,6 @@
 ChkTeX v1.7.6 - Copyright 1995-96 Jens T. Berger Thielemann.
 Compiled with PCRE regex support.
-No errors printed; One warning printed; 210 user suppressed warnings; No line suppressed warnings.
+No errors printed; One warning printed; 212 user suppressed warnings; No line suppressed warnings.
 See the manual for how to suppress some or all of these warnings/errors.
 Rc files read:
   /usr/local/share/latexmk/LatexMk
@@ -10,9 +10,8 @@ Latexmk: Changing directory to '/compile/installation/'
 Running 'internal overleaf_pre_process "installation.tex" "/compile/output.pdf"'
 ------------
 Latexmk: calling overleaf_pre_process( "installation.tex" "/compile/output.pdf" )
-Rule 'pdflatex': File changes, etc:
-   Changed files, or newly in use since previous run(s):
-      'installation.tex'
+Rule 'pdflatex': The following rules & subrules became out-of-date:
+      'pdflatex'
 ------------
 Run number 1 of rule 'pdflatex'
 ------------

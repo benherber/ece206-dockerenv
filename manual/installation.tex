@@ -98,10 +98,10 @@
 	recommend it because it is fast, cross-platform, and has a whole host of extensions that can be useful with Verilog, Docker, and beyond.
 	All of the examples/tutorials in this course will use VSCode.
     
-	There are general instructions for installation as well as some platform-specific for Windows and Unix-like (MacOS/Linux) systems. If you have difficulty getting these installations to work, contact the lab teaching assistants for help.
+	There are general instructions for installation as well as some platform-specific for Windows and Unix-like (MacOS/Linux) systems. If you have difficulty getting these installations to work, contact the lab teaching assistants for help. \textbf{Please read each section carefully before you attempt them. Also, be weary of copy-pasting code from this document using your clipboard as spaces may not be preserved--all commands typically need to be executed exactly as written.}
 
     \section*{Installing: VSCode}
-        The easy-to-install VSCode package is available at \url{https://code.visualstudio.com/}. Navigate there and download the latest version. Go through the installation and accept the license agreement. Configure the optional settings as desired. One of use may be 'AutoSave' which will automatically save an edited file. To enable click on \textit{File}$\rightarrow$\textit{Auto Save}. It should have a check next to it once enabled.
+        The easy-to-install VSCode package is available at \url{https://code.visualstudio.com/}. Navigate there and download the latest version. Go through the installation and accept the license agreement. Configure the optional settings as desired. One of use may be \textit{AutoSave} which will automatically save an edited file. To enable click on \textit{File}$\rightarrow$\textit{Auto Save}. It should have a check next to it once enabled.
 
         \textbf{NOTE:} if you are on MacOS or Linux, please launch VSCode and type \textit{cmd/ctrl+shift+P} and type \textit{Shell Command: Install 'code' command in PATH}. Then restart any shell sessions. This will allow you to launch VSCode from the command line by simply typing \textit{code $<$file-or-dir-name$>$}. For example, \textit{code .} will open the current working directory in VSCode. This should be enabled by default on Windows.
 
@@ -118,7 +118,7 @@
 	        The course has several large partner projects later in the semester. The extension \href{https://marketplace.visualstudio.com/items?itemName=MS-vsliveshare.vsliveshare}{Live Share} comes in very handy as it allows to to have a single, simultaneous programming session (similar to google docs) all within VSCode. Helpful documentation for the extension can be found \href{https://docs.microsoft.com/en-us/visualstudio/liveshare/use/vscode}{here}.
 	        
     \section*{Installing: Docker}
-        Installing Docker is fairly straightforward. Go to the \href{https://docs.docker.com/get-docker/}{Docker Website} and download the application corresponding to your operating system. Follow the instructions to install, restart your computer, and launch Docker Desktop when you log back in. For Windows users, you can safely ignore or reject any mentions of WSL upon installation.
+        Installing Docker is fairly straightforward. Go to the \href{https://docs.docker.com/get-docker/}{Docker Website} and download the application corresponding to your operating system. Follow the instructions to install, restart your computer, and launch Docker Desktop when you log back in. For Windows users, you can safely accept the install WSL2 Backend when prompted as this is needed for Docker to run on Windows systems.
 
         \textbf{NOTE:} Docker Desktop must \textit{always} be running in order when you want to start a container.
     
@@ -131,7 +131,7 @@
                 chmod +x ./ece206
                 ./ece206 init
             \end{bash}
-            This will create a directory ($\sim$/ece206) in your home folder in which \textit{all} project directories must be located in order to be available within the Docker container. It will also pull the latest version of the course's Docker image from the web and you may be prompted to allow the process web access. Restart your shell session, and type:
+            This will create a directory ($\sim$/ece206) in your home folder in which \textit{all} project directories must be located in order to be available within the Docker container. In order to open this directory in VSCode you can simply run the command \textit{code $\sim$/ece206}. It will also pull the latest version of the course's Docker image from the web and you may be prompted to allow the process web access. Restart your shell session, and type:
             \begin{bash}
                 ece206 --help
             \end{bash}
@@ -147,7 +147,7 @@
             \begin{bash}
                 ece206 init
             \end{bash}
-            This will create a directory (\$HOME\textbackslash ece206) in your home folder in which \textit{all} project directories must be located in order to be available within the Docker container. It will also pull the latest version of the course's Docker image from the web and you may be prompted to allow the process web access. Restart your shell session, and type:
+            This will create a directory (\$HOME\textbackslash ece206) in your home folder in which \textit{all} project directories must be located in order to be available within the Docker container. In order to open this directory in VSCode you can simply run the command \textit{code \$HOME/ece206}. It will also pull the latest version of the course's Docker image from the web and you may be prompted to allow the process web access. Restart your shell session, and type:
             \begin{bash}
                 ece206 --help
             \end{bash}
