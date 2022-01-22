@@ -22,24 +22,36 @@
 #%
 #=======================================================================
 #- IMPLEMENTATION
-#-    version         0.0.1
-#-    last updated    2021/10/21
+#-    version         0.0.2
+#-    last updated    2022/1/21
 #-    author(s)       BENJAMIN HERBER,
 #-    repository      https://github.com/benherber/ece206-dockerenv
 #-
 #=======================================================================
 #  HISTORY
 #     2021/10/21 : Benjamin Herber : Created Script
+#     2022/1/21 : Benjamin Herber : Updated to support .devcontainer
+#
 #=======================================================================
 
 # #################################################################### #
 #                              VARIABLES                               #
 # #################################################################### #
 
-WORKDIR=~/ece206 # Working directory for projects
+WORKDIR="~/ece206"              # Working directory for projects
+DEVDIR="$WORKDIR/.devcontainer" # Development configuration directory.
 
-VERSION="0.0.1"          # Version number
-LAST_UPDATED="Oct. 2021" # Last update to script
+VERSION="0.0.2"          # Version number
+LAST_UPDATED="Jan. 2022" # Last update to script
+
+IMAGE="benherber/ece206:latest"                                          # Docker base image
+REPO="https://raw.githubusercontent.com/benherber/ece206-dockerenv/main" # GitHub Repository for raw downloads
+DEVDOCKERFILE="${REPO}/.devcontainer/Dockerfile"                         # Devcontainer Dockerfile
+DEVCONFIG="${REPO}/.devcontainer/devcontainer.json"                      # Devcontainer configuration
+
+# Error Code
+SUCCESS=0
+FAILURE=-1
 
 # #################################################################### #
 #                              FUNCTIONS                               #
@@ -51,24 +63,66 @@ LAST_UPDATED="Oct. 2021" # Last update to script
 
 function usage() {
     echo "Unrecognized command: try \`ece206 --help\` for more options" 1>&2
-    exit 1
+    exit ${FAILURE}
 }
 
 # -------------------------------------------------------------------- #
 
 # Start the docker container with $WORKDIR volume mounted
 # GLOBALS:
-#   WORKDIR
+#   WORKDIR, IMAGE
 # OUTPUTS:
 #   Interactive shell session within container
 
 function start() {
     docker run \
-        --rm \
-        -v "$WORKDIR":/workspace \
-        -e BROADWAY=5 \
-        -p 8085:8085 \
-        -it benherber/ece206:latest /bin/bash
+    --rm \
+    -v "${WORKDIR}":/workspace \
+    -e BROADWAY=5 \
+    -p 8085:8085 \
+    -it "${IMAGE}" /bin/bash
+}
+
+# -------------------------------------------------------------------- #
+
+# Update the existing VSCode configurations an Docker image
+# GLOBALS:
+#   DEVDIR
+#   DEVCONFIG
+#   DEVDOCKERFILE
+#   IMAGE
+# RETURN:
+#   0 if succeeded, non-zero on error.
+
+function update() {
+    # Download the development configuration
+    [ ! -d "${DEVDIR}" ] && echo "Error: run \`ece206 init\`" 1>&2 && exit 2
+    [ -f "${DEVDIR}/Dockerfile" ] && \
+        rm -f "${DEVDIR}/Dockerfile"
+    [ -f "$DEVDIR/devcontainer.json" ] && \
+        rm -f "${DEVDIR}/devcontainer.json"
+
+    curl \
+        -o "${DEVDIR}/devcontainer.json" "${DEVCONFIG}" \
+        -o "${DEVDIR}/Dockerfile" "${DEVDOCKERFILE}"
+
+    # Pull Docker image
+    docker pull "${IMAGE}"
+
+    exit ${SUCCESS}
+}
+
+# -------------------------------------------------------------------- #
+
+# Open a preconfigured VSCode session inside a Docker container.
+# GLOBALS:
+#   WORKDIR
+# RETURN:
+#   0 if succeeded, non-zero on error.
+
+function code() {
+    devcontainer open "${WORKDIR/#\~/${HOME}}"
+    exit ${SUCCESS}
 }
 
 # -------------------------------------------------------------------- #
@@ -76,47 +130,70 @@ function start() {
 # Create working directory (~/ece206) and put script in bin directory
 # GLOBALS:
 #   WORKDIR
+#   DEVDIR
+#   DEVCONFIG
+#   DEVDOCKERFILE
+#   IMAGE
 # RETURN:
 #   0 if succeeded, non-zero on error.
 
 function init() {
-    [ ! -d "$WORKDIR" ] && mkdir "$WORKDIR"
+    # Validate directory structure
+    [ ! -d "${WORKDIR}" ] && mkdir "${WORKDIR}"
+    [ ! -d "${DEVDIR}" ] && mkdir "${DEVDIR}"
+    [ -f "${DEVDIR}/Dockerfile" ] && \
+        rm -f "${DEVDIR}/Dockerfile"
+    [ -f "$DEVDIR/devcontainer.json" ] && \
+        rm -f "${DEVDIR}/devcontainer.json"
+
+    # Download the development configuration
+    curl \
+        -o "${DEVDIR}/devcontainer.json" "${DEVCONFIG}" \
+        -o "${DEVDIR}/Dockerfile" "${DEVDOCKERFILE}"
+
+    # Initialize CLI
     touch /usr/local/bin/ece206
     cat $(pwd)/ece206 >| /usr/local/bin/ece206
     chmod +x /usr/local/bin/ece206
-    docker pull benherber/ece206:latest
-    return 0
+
+    # Pull Docker image
+    docker pull "${IMAGE}"
+    exit ${SUCCESS}
 }
 
 # -------------------------------------------------------------------- #
 
 # Print help information to stdout
 # GLOBALS:
-#   VERSION, LAST_UPDATED
+#   VERSION
+#   LAST_UPDATED
+#   WORKDIR
 # OUTPUTS:
 #   Write help info to stdout
 # RETURN:
 #   0 if print succeeds, non-zero on error.
 
 function helpme() {
-    echo ""
-    echo "SYNOPSIS"
-    echo "  ece206 [COMMAND]"
-    echo ""
-    echo "DESCRIPTION"
-    echo "  A helper script to assist in utlizing a docker environment" \
-        "to write and test verilog projects."
-    echo ""
-    echo "COMMANDS"
-    echo "  init   Create cli and working directory for projects"
-    echo "  start  Start docker container with ~/ece206 mounted"
-    echo ""
-    echo "OPTIONS"
-    echo "  --help | -h  Show this screen"
-    echo ""
-    echo "version: $VERSION, last updated: $LAST_UPDATED"
-    echo ""
-    return 0
+    echo -e "\n" \
+    "SYNOPSIS\n" \
+    "\tece206 [COMMAND]\n" \
+    "\n" \
+    "DESCRIPTION\n" \
+    "\tA helper script to assist in utlizing a docker environment" \
+    "to write and test verilog projects.\n" \
+    "\n" \
+    "COMMANDS\n" \
+    "\tinit\tCreate cli and working directory for projects\n" \
+    "\tstart\tStart docker container with ${WORKDIR} mounted\n" \
+    "\tupdate\tUpdate the VSCode configuration and Docker image\n" \
+    "\tcode\tOpen a preconfigured VSCode session in Docker\n" \
+    "\n" \
+    "OPTIONS\n" \
+    "\t--help | -h\tShow this screen\n" \
+    "\n" \
+    "version: ${VERSION}, last updated: ${LAST_UPDATED}\n" \
+    "\n"
+    exit ${SUCCESS}
 }
 
 # #################################################################### #
@@ -128,21 +205,27 @@ function helpme() {
 
 # Parse Args:
 case "$1" in
-"init")
-    init
+    "init")
+        init
     ;;
-"wdir")
-    wdir
+    "wdir")
+        wdir
     ;;
-"start")
-    start
+    "start")
+        start
     ;;
-"-h" | "--help")
-    helpme
+    "-h" | "--help")
+        helpme
     ;;
-*)
-    usage
+    "update")
+        update
+    ;;
+    "code")
+        code
+    ;;
+    *)
+        usage
     ;;
 esac
 
-exit 0
+exit ${SUCCESS}
