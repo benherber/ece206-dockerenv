@@ -60,7 +60,7 @@ Function Global:ece206 {
     # OUTPUTS:
     #   Write help message to stderr
     Function Usage {
-        throw "Unrecognized command - try ``ece206 --help`` for more options."
+        Throw "Unrecognized command - try ``ece206 --help`` for more options."
     }
 
     # -------------------------------------------------------------------- #
@@ -72,12 +72,16 @@ Function Global:ece206 {
     #   Interactive shell session within container
 
     Function StartContainer {
-        docker run `
-            --rm `
-            -v ${WORKDIR}:/workspace `
-            -e BROADWAY=5 `
-            -p 8085:8085 `
-            -it ${IMAGE} /bin/bash
+        If (Get-Command -errorAction SilentlyContinue docker) {
+            docker run `
+                --rm `
+                -v ${WORKDIR}:/workspace `
+                -e BROADWAY=5 `
+                -p 8085:8085 `
+                -it ${IMAGE} /bin/bash
+        } Else {
+            Throw "Install WSL2 and Docker and make sure Docker is running"
+        }
     }
 
     # -------------------------------------------------------------------- #
@@ -92,7 +96,7 @@ Function Global:ece206 {
     Function Update {
         # Validate directory structure
         If (!(Test-Path ${DEVDIR})) {
-            throw "Please run ``ece206 init`` first"
+            Throw "Please run ``ece206 init`` first"
         }
         If ((Test-Path "${DEVDIR}\devcontainer.json")) {
             Remove-Item -Force -Path "${DEVDIR}\devcontainer.json"
@@ -102,9 +106,8 @@ Function Global:ece206 {
         }
 
         # Get vscode configuration
-        curl `
-            -o "${DEVDIR}\devcontainer.json" "${DEVCONFIG}" `
-            -o "${DEVDIR}\Dockerfile" "${DEVDOCKERFILE}"
+        Invoke-WebRequest -OutFile "${DEVDIR}\devcontainer.json" -Uri "${DEVCONFIG}"
+        Invoke-WebRequest -OutFile "${DEVDIR}\Dockerfile" -Uri "${DEVDOCKERFILE}"
 
         # Update Docker image
         docker pull ${IMAGE}
@@ -119,13 +122,11 @@ Function Global:ece206 {
     #   0 if succeeded, non-zero on error.
 
     Function Code {
-        Try {
-            If (Get-Command devcontainer) {
-                devcontainer open "${WORKDIR}"
-            }
-        } Catch {
-            throw ("Please run ``Remote-Containers: Install devcontainer CLI``" +
-                   "from the command pallete (ctrl+shift+P) in VSCode")
+        If (Get-Command -errorAction SilentlyContinue devcontainer) {
+            devcontainer open "${WORKDIR}"
+        } Else {
+            Throw ("Please run ``Remote-Containers: Install devcontainer CLI`` " +
+                "from the command pallete (ctrl+shift+P) in VSCode")
         }
     }
 
@@ -139,37 +140,34 @@ Function Global:ece206 {
     #   IMAGE
 
     Function Init {
-        Try {
-            If (Get-Command docker) { 
-                # Validate directory structure
-                If (!(Test-Path ${WORKDIR})) {
-                    New-Item -ItemType Directory -Force -Path ${WORKDIR}
-                }
-                If (!(Test-Path ${DEVDIR})) {
-                    New-Item -ItemType Directory -Force -Path ${DEVDIR}
-                }
-                If ((Test-Path "${DEVDIR}\devcontainer.json")) {
-                    Remove-Item  -Force -Path "${DEVDIR}\devcontainer.json"
-                }
-                If ((Test-Path "${DEVDIR}\Dockerfile")) {
-                    Remove-Item -Force -Path "${DEVDIR}\Dockerfile"
-                }
-
-                # Validate CLI
-                If (!(Test-Path ${PROFILE})) {
-                    throw "Please paste these Functions into ${PROFILE}"
-                }
-
-                # Get vscode configuration
-                curl `
-                    -o "${DEVDIR}\devcontainer.json" "${DEVCONFIG}" `
-                    -o "${DEVDIR}\Dockerfile" "${DEVDOCKERFILE}"
-
-                # Update Docker image
-                docker pull ${IMAGE}
+        If (Get-Command -errorAction SilentlyContinue docker) {
+            # Validate directory structure
+            If (!(Test-Path ${WORKDIR})) {
+                New-Item -ItemType Directory -Force -Path ${WORKDIR}
             }
-        } Catch {
-            throw "Install WSL2 and Docker and make sure Docker running"
+            If (!(Test-Path ${DEVDIR})) {
+                New-Item -ItemType Directory -Force -Path ${DEVDIR}
+            }
+            If ((Test-Path "${DEVDIR}\devcontainer.json")) {
+                Remove-Item  -Force -Path "${DEVDIR}\devcontainer.json"
+            }
+            If ((Test-Path "${DEVDIR}\Dockerfile")) {
+                Remove-Item -Force -Path "${DEVDIR}\Dockerfile"
+            }
+
+            # Validate CLI
+            If (!(Test-Path ${PROFILE})) {
+                Throw "Please paste these Functions into ${PROFILE}"
+            }
+
+            # Get vscode configuration
+            Invoke-WebRequest -OutFile "${DEVDIR}\devcontainer.json" -Uri "${DEVCONFIG}"
+            Invoke-WebRequest -OutFile "${DEVDIR}\Dockerfile" -Uri "${DEVDOCKERFILE}"
+
+            # Update Docker image
+            docker pull ${IMAGE}
+        } Else {
+            Throw "Install WSL2 and Docker and make sure Docker is running"
         }
     }
 
@@ -202,10 +200,10 @@ Function Global:ece206 {
             ""
             "version: ${VERSION}, last updated: ${LAST_UPDATED}"
             ""
-        ) -join "`r`n"
+        )
 
 
-        Write-Host -Separator "" ${MSG}
+        Write-Host -Separator "`r`n" ${MSG}
     }
 
 # #################################################################### #
