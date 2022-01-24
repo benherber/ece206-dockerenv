@@ -51,10 +51,6 @@ Function Global:ece206 {
     $REPO="https://raw.githubusercontent.com/benherber/ece206-dockerenv/main" # GitHub Repository for raw downloads
     $DEVDOCKERFILE="${REPO}/.devcontainer/Dockerfile"                         # Devcontainer Dockerfile
     $DEVCONFIG="${REPO}/.devcontainer/devcontainer.json"                      # Devcontainer configuration
-    
-    # Error Code
-    $SUCCESS=0
-    $FAILURE=-1
 
     # #################################################################### #
     #                              FUNCTIONS                               #
@@ -81,7 +77,7 @@ Function Global:ece206 {
             -v ${WORKDIR}:/workspace `
             -e BROADWAY=5 `
             -p 8085:8085 `
-            -it benherber/ece206:latest /bin/bash
+            -it ${IMAGE} /bin/bash
     }
 
     # -------------------------------------------------------------------- #
@@ -111,7 +107,7 @@ Function Global:ece206 {
             -o "${DEVDIR}\Dockerfile" "${DEVDOCKERFILE}"
 
         # Update Docker image
-        docker pull benherber/ece206:latest
+        docker pull ${IMAGE}
     }
 
     # -------------------------------------------------------------------- #
@@ -170,7 +166,7 @@ Function Global:ece206 {
                     -o "${DEVDIR}\Dockerfile" "${DEVDOCKERFILE}"
 
                 # Update Docker image
-                docker pull benherber/ece206:latest
+                docker pull ${IMAGE}
             }
         } Catch {
             throw "Install WSL2 and Docker and make sure Docker running"
