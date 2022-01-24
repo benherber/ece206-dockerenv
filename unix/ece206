@@ -7,31 +7,32 @@
 #+    ece206 [COMMAND]
 #%
 #% DESCRIPTION
-#+    A helper script to assist in utlizing a docker environment
+#-    A helper script to assist in utlizing a docker environment
 #+    to write and test verilog projects.
 #%
 #% COMMANDS
-#+    init          Create cli and working directory for projects
-#+    start         Start docker container with ~/ece206 mounted
+#-    init    Create cli and working directory for projects
+#-    start   Start docker container with ~/ece206 mounted
+#-    update  Update the VSCode configuration and Docker image
+#-    code    Open a preconfigured VSCode session in Docker
 #%
 #% OPTIONS
-#+    -h, --help                    Print help information
+#-    --help                    Print help information
 #%
 #% EXAMPLES
-#+    ece206 start
+#-    ece206 start
 #%
 #=======================================================================
-#- IMPLEMENTATION
+#% IMPLEMENTATION
 #-    version         0.0.2
 #-    last updated    2022/1/21
 #-    author(s)       BENJAMIN HERBER,
 #-    repository      https://github.com/benherber/ece206-dockerenv
-#-
+#%
 #=======================================================================
-#  HISTORY
-#     2021/10/21 : Benjamin Herber : Created Script
-#     2022/1/21 : Benjamin Herber : Updated to support .devcontainer
-#
+#% HISTORY
+#-    2021/10/21 : Benjamin Herber : Created Script
+#-    2022/1/21 : Benjamin Herber : Updated to support .devcontainer
 #=======================================================================
 
 # #################################################################### #
@@ -121,6 +122,13 @@ function update() {
 #   0 if succeeded, non-zero on error.
 
 function code() {
+    if ! command -v devcontainer &> /dev/null
+    then
+        echo "ERROR: Please run \`Remote-Containers: Install devcontainer CLI\`" \
+             "from the command pallete (cmd/ctrl+shit+P) in VSCode"
+        exit ${FAILURE}
+    fi
+
     devcontainer open "${WORKDIR/#\~/${HOME}}"
     exit ${SUCCESS}
 }
@@ -138,6 +146,12 @@ function code() {
 #   0 if succeeded, non-zero on error.
 
 function init() {
+    if ! command -v docker &> /dev/null
+    then
+        echo "ERROR: Install Docker and make sure it's running"
+        exit ${FAILURE}
+    fi
+
     # Validate directory structure
     [ ! -d "${WORKDIR}" ] && mkdir "${WORKDIR}"
     [ ! -d "${DEVDIR}" ] && mkdir "${DEVDIR}"
@@ -174,25 +188,29 @@ function init() {
 #   0 if print succeeds, non-zero on error.
 
 function helpme() {
-    echo -e "\n" \
-    "SYNOPSIS\n" \
-    "\tece206 [COMMAND]\n" \
-    "\n" \
-    "DESCRIPTION\n" \
-    "\tA helper script to assist in utlizing a docker environment" \
-    "to write and test verilog projects.\n" \
-    "\n" \
-    "COMMANDS\n" \
-    "\tinit\tCreate cli and working directory for projects\n" \
-    "\tstart\tStart docker container with ${WORKDIR} mounted\n" \
-    "\tupdate\tUpdate the VSCode configuration and Docker image\n" \
-    "\tcode\tOpen a preconfigured VSCode session in Docker\n" \
-    "\n" \
-    "OPTIONS\n" \
-    "\t--help | -h\tShow this screen\n" \
-    "\n" \
-    "version: ${VERSION}, last updated: ${LAST_UPDATED}\n" \
-    "\n"
+    TAB="\t"
+    MSG=(
+            ""
+            "SYNOPSIS"
+            "${TAB}ece206 [COMMAND]"
+            ""
+            "DESCRIPTION"
+            "${TAB}A helper script to assist in utlizing a docker environment to write and test verilog projects."
+            ""
+            "COMMANDS"
+            "${TAB}init${TAB}Create cli and working directory for projects"
+            "${TAB}start${TAB}Start docker container with ~/ece206 mounted"
+            "${TAB}update${TAB}Update the VSCode configuration and Docker image"
+            "${TAB}code${TAB}Open a preconfigured VSCode session in Docker"
+            ""
+            "OPTIONS"
+            "${TAB}--help | -h${TAB}Show this screen"
+            ""
+            "version: ${VERSION}, last updated: ${LAST_UPDATED}"
+            ""
+        )
+
+    ( IFS=$'\n'; echo -e "${MSG[*]}" )
     exit ${SUCCESS}
 }
 

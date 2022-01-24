@@ -5,30 +5,32 @@
 #+    ece206 [COMMAND]
 #%
 #% DESCRIPTION
-#+    A helper script to assist in utlizing a docker environment
+#-    A helper script to assist in utlizing a docker environment
 #+    to write and test verilog projects.
 #%
 #% COMMANDS
-#+    init          Create cli and working directory for projects
-#+    start         Start docker container with ~/ece206 mounted
+#-    init    Create cli and working directory for projects
+#-    start   Start docker container with ~/ece206 mounted
+#-    update  Update the VSCode configuration and Docker image
+#-    code    Open a preconfigured VSCode session in Docker
 #%
 #% OPTIONS
-#+    --help                    Print help information
+#-    --help                    Print help information
 #%
 #% EXAMPLES
-#+    ece206 start
+#-    ece206 start
 #%
 #=======================================================================
-#- IMPLEMENTATION
-#-    version         0.0.1
+#% IMPLEMENTATION
+#-    version         0.0.2
 #-    last updated    2022/1/21
 #-    author(s)       BENJAMIN HERBER,
 #-    repository      https://github.com/benherber/ece206-dockerenv
-#-
+#%
 #=======================================================================
-#  HISTORY
-#     2021/10/21 : Benjamin Herber : Created Script
-#     2022/1/21 : Benjamin Herber : Updated to support .devcontainer
+#% HISTORY
+#-    2021/10/21 : Benjamin Herber : Created Script
+#-    2022/1/21 : Benjamin Herber : Updated to support .devcontainer
 #=======================================================================
 
 # #################################################################### #
@@ -51,7 +53,7 @@ Function Global:ece206 {
     $DEVCONFIG="${REPO}/.devcontainer/devcontainer.json"                      # Devcontainer configuration
     
     # Error Code
-    $SUCCESS=
+    $SUCCESS=0
     $FAILURE=-1
 
     # #################################################################### #
@@ -121,7 +123,14 @@ Function Global:ece206 {
     #   0 if succeeded, non-zero on error.
 
     Function Code {
-        devcontainer open "${WORKDIR}"
+        Try {
+            If (Get-Command devcontainer) {
+                devcontainer open "${WORKDIR}"
+            }
+        } Catch {
+            throw ("Please run ``Remote-Containers: Install devcontainer CLI``" +
+                   "from the command pallete (ctrl+shift+P) in VSCode")
+        }
     }
 
     # -------------------------------------------------------------------- #
@@ -134,32 +143,38 @@ Function Global:ece206 {
     #   IMAGE
 
     Function Init {
-        # Validate directory structure
-        If (!(Test-Path ${WORKDIR})) {
-            New-Item -ItemType Directory -Force -Path ${WORKDIR}
-        }
-        If (!(Test-Path ${DEVDIR})) {
-            New-Item -ItemType Directory -Force -Path ${DEVDIR}
-        }
-        If ((Test-Path "${DEVDIR}\devcontainer.json")) {
-            Remove-Item  -Force -Path "${DEVDIR}\devcontainer.json"
-        }
-        If ((Test-Path "${DEVDIR}\Dockerfile")) {
-            Remove-Item -Force -Path "${DEVDIR}\Dockerfile"
-        }
+        Try {
+            If (Get-Command docker) { 
+                # Validate directory structure
+                If (!(Test-Path ${WORKDIR})) {
+                    New-Item -ItemType Directory -Force -Path ${WORKDIR}
+                }
+                If (!(Test-Path ${DEVDIR})) {
+                    New-Item -ItemType Directory -Force -Path ${DEVDIR}
+                }
+                If ((Test-Path "${DEVDIR}\devcontainer.json")) {
+                    Remove-Item  -Force -Path "${DEVDIR}\devcontainer.json"
+                }
+                If ((Test-Path "${DEVDIR}\Dockerfile")) {
+                    Remove-Item -Force -Path "${DEVDIR}\Dockerfile"
+                }
 
-        # Validate CLI
-        If (!(Test-Path ${PROFILE})) {
-            throw "Please paste these Functions into ${PROFILE}"
+                # Validate CLI
+                If (!(Test-Path ${PROFILE})) {
+                    throw "Please paste these Functions into ${PROFILE}"
+                }
+
+                # Get vscode configuration
+                curl `
+                    -o "${DEVDIR}\devcontainer.json" "${DEVCONFIG}" `
+                    -o "${DEVDIR}\Dockerfile" "${DEVDOCKERFILE}"
+
+                # Update Docker image
+                docker pull benherber/ece206:latest
+            }
+        } Catch {
+            throw "Install WSL2 and Docker and make sure Docker running"
         }
-
-        # Get vscode configuration
-        curl `
-            -o "${DEVDIR}\devcontainer.json" "${DEVCONFIG}" `
-            -o "${DEVDIR}\Dockerfile" "${DEVDOCKERFILE}"
-
-        # Update Docker image
-        docker pull benherber/ece206:latest
     }
 
     # -------------------------------------------------------------------- #
@@ -171,24 +186,30 @@ Function Global:ece206 {
     #   Write help info to stdout
 
     Function HelpMe {
-        Write-Host -Separator "" `
-        "`n" `
-        "SYNOPSIS`n" `
-        "  ece206 [COMMAND]`n" `
-        "`n" `
-        "DESCRIPTION`n" `
-        "  A helper script to assist in utlizing a docker environment to write and test verilog projects.`n" `
-        "`n" `
-        "COMMANDS`n" `
-        "`tinit`tCreate cli and working directory for projects`n" `
-        "`tstart`tStart docker container with ~/ece206 mounted`n" `
-        "`tupdate`tUpdate the VSCode configuration and Docker image`n" `
-        "`n" `
-        "OPTIONS`n" `
-        "`t--help | -h`tShow this screen`n" `
-        "`n" `
-        "version: ${VERSION}, last updated: ${LAST_UPDATED}`n"
-        ""
+        $TAB = "`t"
+        $MSG = @(
+            ""
+            "SYNOPSIS"
+            "${TAB}ece206 [COMMAND]"
+            ""
+            "DESCRIPTION"
+            "${TAB}A helper script to assist in utlizing a docker environment to write and test verilog projects."
+            ""
+            "COMMANDS"
+            "${TAB}init${TAB}Create cli and working directory for projects"
+            "${TAB}start${TAB}Start docker container with ~/ece206 mounted"
+            "${TAB}update${TAB}Update the VSCode configuration and Docker image"
+            "${TAB}code${TAB}Open a preconfigured VSCode session in Docker"
+            ""
+            "OPTIONS"
+            "${TAB}--help | -h${TAB}Show this screen"
+            ""
+            "version: ${VERSION}, last updated: ${LAST_UPDATED}"
+            ""
+        ) -join "`r`n"
+
+
+        Write-Host -Separator "" ${MSG}
     }
 
 # #################################################################### #
@@ -198,13 +219,13 @@ Function Global:ece206 {
     # Parse Args:
     try {
         switch (${cmd}) {
-            "init"   { Init; Break }
+            "init"   { Init; Break           }
             "start"  { StartContainer; Break }
-            "--help" { HelpMe; Break }
-            "-h"     { HelpMe; Break }
-            "update" { Update; Break }
-            "code"   { Code; Break }
-            Default  { Usage; Break }
+            "--help" { HelpMe; Break         }
+            "-h"     { HelpMe; Break         }
+            "update" { Update; Break         }
+            "code"   { Code; Break           }
+            Default  { Usage; Break          }
         }
     } catch {
         Write-Error $_
