@@ -39,7 +39,7 @@
 #                              VARIABLES                               #
 # #################################################################### #
 
-WORKDIR="~/ece206"              # Working directory for projects
+WORKDIR=~/ece206                # Working directory for projects
 DEVDIR="$WORKDIR/.devcontainer" # Development configuration directory.
 
 VERSION="0.0.2"          # Version number
@@ -225,9 +225,6 @@ function helpme() {
 case "$1" in
     "init")
         init
-    ;;
-    "wdir")
-        wdir
     ;;
     "start")
         start
