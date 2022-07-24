@@ -2,13 +2,11 @@
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.194.0/containers/docker-existing-dockerfile
 {
 	"name": "ECE206",
-	// Set Dockerfile.
-	"build": {
-		"dockerfile": "./Dockerfile",
-		"args": {
-			"BROADWAY": "5"
-		}
-	},
+	// Define compose set-up.
+	"dockerComposeFile": "../docker-compose.yaml",
+	"service": "ece206-dev",
+	"workspaceFolder": "/workspace",
+	"shutdownAction": "stopCompose",
 	// Set *default* container specific settings.json values on container create.
 	"settings": {
 		// Set Up Terminal.
@@ -38,7 +36,7 @@
 		"stkb.rewrap"
 	],
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	"forwardPorts": [
-		"8085:8085"
-	]
+	// "forwardPorts": [
+	// 	"8090:8090"
+	// ]
 }
